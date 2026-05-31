@@ -3,242 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business Analyst — GMM Grammy Ticket System</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Data Analyst — GMM Grammy Ticket System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root{
-  --bg:#FAFAF8;--surface:#FFFFFF;--surface2:#F4F3EF;
-  --border:#E5E4DF;--border2:#D0CFC9;
-  --red:#C8392B;--red-lt:#FDF0EE;--red-md:#F5C1BB;
-  --blue:#1A5FA8;--blue-lt:#EBF3FD;--blue-md:#B3D1F5;
-  --green:#1D7A4A;--green-lt:#EBFAF2;--green-md:#A7DFC2;
-  --amber:#8C5A00;--amber-lt:#FDF5E6;--amber-md:#F5D89A;
-  --purple:#4A2A8C;--purple-lt:#F0EDFB;--purple-md:#C9BFEE;
-  --teal:#0D6B63;--teal-lt:#E6F7F5;--teal-md:#A0DDD8;
-  --text:#1A1A18;--text2:#6B6A65;--text3:#AAAA A4;
-  --sans:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+:root {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1e1e1e;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --red: #E24B4A;
+  --red-dim: rgba(226,75,74,0.15);
+  --blue: #4A9EE2;
+  --blue-dim: rgba(74,158,226,0.15);
+  --green: #4AE28A;
+  --green-dim: rgba(74,226,138,0.12);
+  --amber: #E2A84A;
+  --amber-dim: rgba(226,168,74,0.15);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans Thai', sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; min-height: 100vh; }
 
-.topbar{background:var(--surface);border-bottom:1px solid var(--border2);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.badge{background:var(--blue);color:#fff;font-size:10px;font-weight:600;padding:3px 9px;border-radius:3px;letter-spacing:1px}
-.topbar-title{font-size:15px;font-weight:600;margin-left:12px}
-.topbar-sub{font-size:11px;color:var(--text2);font-family:var(--mono);margin-left:12px}
-.topbar-left{display:flex;align-items:center}
-.date-tag{font-size:11px;color:var(--text2);font-family:var(--mono);background:var(--surface2);padding:4px 10px;border-radius:4px;border:1px solid var(--border)}
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border2); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.badge { background: var(--red); color: #fff; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 3px; letter-spacing: 1px; }
+.topbar-title { font-size: 15px; font-weight: 500; }
+.topbar-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.live-label { font-size: 11px; color: var(--green); font-family: var(--mono); display: flex; align-items: center; gap: 6px; }
 
-.page{padding:28px 32px;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
-.section-label{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--text2);text-transform:uppercase;font-family:var(--mono);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.page { padding: 28px; display: flex; flex-direction: column; gap: 20px; max-width: 1200px; margin: 0 auto; }
 
-/* BMC */
-.bmc-wrap{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:auto auto;gap:10px}
-.bmc-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;min-height:120px}
-.bmc-cell.tall{grid-row:span 2}
-.bmc-head{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);margin-bottom:8px}
-.bmc-body{font-size:12px;color:var(--text2);line-height:1.8}
-.bmc-body strong{color:var(--text);font-weight:500}
+.section-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; font-family: var(--mono); margin-bottom: 12px; }
 
-.c-kp{background:var(--red-lt);border-color:var(--red-md)}.c-kp .bmc-head{color:var(--red)}
-.c-ka{background:var(--blue-lt);border-color:var(--blue-md)}.c-ka .bmc-head{color:var(--blue)}
-.c-kr{background:var(--teal-lt);border-color:var(--teal-md)}.c-kr .bmc-head{color:var(--teal)}
-.c-vp{background:var(--green-lt);border-color:var(--green-md)}.c-vp .bmc-head{color:var(--green)}
-.c-cr{background:var(--purple-lt);border-color:var(--purple-md)}.c-cr .bmc-head{color:var(--purple)}
-.c-ch{background:var(--teal-lt);border-color:var(--teal-md)}.c-ch .bmc-head{color:var(--teal)}
-.c-cs{background:var(--amber-lt);border-color:var(--amber-md)}.c-cs .bmc-head{color:var(--amber)}
-.c-rev{background:var(--green-lt);border-color:var(--green-md)}.c-rev .bmc-head{color:var(--green)}
-.c-cost{background:var(--red-lt);border-color:var(--red-md)}.c-cost .bmc-head{color:var(--red)}
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; position: relative; overflow: hidden; transition: border-color .2s; }
+.kpi:hover { border-color: var(--border2); }
+.kpi-accent { position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+.kpi-label { font-size: 11px; color: var(--text2); margin-bottom: 10px; font-family: var(--mono); }
+.kpi-num { font-size: 28px; font-weight: 600; font-family: var(--mono); letter-spacing: -1px; }
+.kpi-delta { font-size: 11px; margin-top: 6px; font-family: var(--mono); }
+.delta-up { color: var(--green); } .delta-down { color: var(--red); }
 
-.bmc-bottom{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.charts-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+.chart-title { font-size: 12px; font-weight: 500; color: var(--text2); font-family: var(--mono); letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.chart-title::before { content: '//'; color: var(--text3); }
 
-/* Requirements matrix */
-.req-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.req-table{width:100%;border-collapse:collapse;font-size:12px}
-.req-table thead{background:var(--surface2)}
-.req-table th{font-size:10px;font-family:var(--mono);letter-spacing:0.8px;text-transform:uppercase;color:var(--text2);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border2)}
-.req-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.req-table tr:last-child td{border-bottom:none}
-.req-table tr:hover td{background:var(--surface2)}
-.pill{font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;font-family:var(--mono)}
-.ph{background:var(--red-lt);color:var(--red)}
-.pm{background:var(--amber-lt);color:var(--amber)}
-.pl{background:var(--green-lt);color:var(--green)}
-.status-wrap{display:flex;align-items:center;gap:6px;font-size:11px}
-.dot{width:7px;height:7px;border-radius:50%}
+.leg { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); font-family: var(--mono); }
+.leg-sq { width: 8px; height: 8px; border-radius: 1px; }
 
-/* Process flow */
-.flow-wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
-.flow-step{background:var(--surface);border:1px solid var(--border);padding:14px;position:relative}
-.flow-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--border2);font-size:18px;z-index:1;background:var(--bg);padding:2px}
-.flow-step:first-child{border-radius:8px 0 0 8px}
-.flow-step:last-child{border-radius:0 8px 8px 0}
-.flow-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:var(--mono);margin-bottom:8px}
-.flow-title{font-size:12px;font-weight:600;margin-bottom:5px}
-.flow-desc{font-size:11px;color:var(--text2);line-height:1.6}
+.wide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
 
-/* Stakeholder map */
-.stake-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stake-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
-.stake-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.stake-name{font-size:13px;font-weight:600;margin-bottom:3px}
-.stake-role{font-size:11px;color:var(--text2);line-height:1.5}
+.anomaly-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.anomaly-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+.anomaly-head { font-size: 10px; font-family: var(--mono); letter-spacing: 1.5px; color: var(--text3); margin-bottom: 8px; text-transform: uppercase; }
+.anomaly-val { font-size: 20px; font-weight: 600; font-family: var(--mono); }
+.anomaly-desc { font-size: 11px; color: var(--text2); margin-top: 5px; line-height: 1.5; }
 
-.footer{padding:16px 32px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
-.footer-text{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.funnel-table { width: 100%; border-collapse: collapse; }
+.funnel-table th { font-size: 10px; font-family: var(--mono); color: var(--text3); text-align: left; padding: 0 8px 10px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.funnel-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 12px; }
+.funnel-table tr:last-child td { border-bottom: none; }
+.bar-cell { width: 220px; }
+.bar-bg { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+.footer { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.footer-text { font-size: 11px; color: var(--text3); font-family: var(--mono); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-left">
-    <span class="badge">BA</span>
-    <span class="topbar-title">Business Analyst Model</span>
-    <span class="topbar-sub">GMM Grammy · Ticket Membership System</span>
+    <span class="badge">DA</span>
+    <div>
+      <div class="topbar-title">Data Analyst Dashboard</div>
+      <div class="topbar-sub">GMM Grammy · Ticket Membership System</div>
+    </div>
   </div>
-  <div class="date-tag">v1.0 · 2025</div>
+  <div class="live-label"><div class="live-dot"></div> Live data simulation</div>
 </div>
 
 <div class="page">
 
   <div>
-    <div class="section-label">Business Model Canvas</div>
-    <div class="bmc-wrap">
-      <div class="bmc-cell c-kp">
-        <div class="bmc-head">Key Partners</div>
-        <div class="bmc-body">
-          <strong>GMM Grammy</strong><br>
-          Thai National ID (DOPA)<br>
-          Face scan vendor<br>
-          Payment gateway<br>
-          Cloudflare / AWS<br>
-          <strong>Thai Ticket Major</strong>
-        </div>
+    <div class="section-label">KPI Overview</div>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-accent" style="background:var(--red)"></div>
+        <div class="kpi-label">Total members</div>
+        <div class="kpi-num" style="color:var(--red)">20,588</div>
+        <div class="kpi-delta delta-up">↑ +8.3% MoM</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="bmc-cell c-ka">
-          <div class="bmc-head">Key Activities</div>
-          <div class="bmc-body">Identity verification<br>Anti-bot enforcement<br>Queue management<br>Ticket issuance & entry</div>
-        </div>
-        <div class="bmc-cell c-kr">
-          <div class="bmc-head">Key Resources</div>
-          <div class="bmc-body">Face recognition API<br>Member database<br>Dev & ops team<br>Compliance team</div>
-        </div>
+      <div class="kpi">
+        <div class="kpi-accent" style="background:var(--blue)"></div>
+        <div class="kpi-label">Conversion rate</div>
+        <div class="kpi-num" style="color:var(--blue)">68.4%</div>
+        <div class="kpi-delta delta-up">↑ +4.1pp vs last month</div>
       </div>
-      <div class="bmc-cell c-vp tall">
-        <div class="bmc-head">Value Proposition</div>
-        <div class="bmc-body">
-          ✓ <strong>ยุติธรรม</strong> — แฟนจริงได้บัตร<br>
-          ✓ <strong>ปลอดภัย</strong> — PDPA-compliant<br>
-          ✓ <strong>โปร่งใส</strong> — virtual queue<br>
-          ✓ <strong>ป้องกัน scalper</strong> 100%<br>
-          ✓ <strong>ขายต่อไม่ได้</strong><br>
-          ✓ <strong>รองรับต่างชาติ</strong>
-        </div>
+      <div class="kpi">
+        <div class="kpi-accent" style="background:var(--amber)"></div>
+        <div class="kpi-label">Bot blocked (total)</div>
+        <div class="kpi-num" style="color:var(--amber)">1,247</div>
+        <div class="kpi-delta delta-down">↑ 47 new today</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="bmc-cell c-cr">
-          <div class="bmc-head">Customer Relationships</div>
-          <div class="bmc-body">Membership program<br>Push notification<br>Email / SMS alerts<br>In-app live support</div>
-        </div>
-        <div class="bmc-cell c-ch">
-          <div class="bmc-head">Channels</div>
-          <div class="bmc-body">Mobile app (iOS/Android)<br>Web app<br>Thai Ticket Major<br>GMM Platform</div>
-        </div>
-      </div>
-      <div class="bmc-cell c-cs">
-        <div class="bmc-head">Customer Segments</div>
-        <div class="bmc-body">
-          <strong>แฟนเพลงไทย</strong> (ID card)<br>
-          นักท่องเที่ยวต่างชาติ<br>
-          Corporate buyer<br>
-          Music community
-        </div>
-      </div>
-    </div>
-    <div class="bmc-bottom" style="margin-top:10px">
-      <div class="bmc-cell c-cost">
-        <div class="bmc-head">Cost Structure</div>
-        <div class="bmc-body">Face scan API cost · Dev & maintenance · Server / CDN cost · Security audit · Compliance & PDPA · Support team</div>
-      </div>
-      <div class="bmc-cell c-rev">
-        <div class="bmc-head">Revenue Streams</div>
-        <div class="bmc-body">Ticket service fee 5% · Membership subscription (optional) · Priority queue premium · Analytics-as-a-service สำหรับ promoters</div>
+      <div class="kpi">
+        <div class="kpi-accent" style="background:var(--green)"></div>
+        <div class="kpi-label">Avg queue wait</div>
+        <div class="kpi-num" style="color:var(--green)">3.8 min</div>
+        <div class="kpi-delta delta-up">↓ -1.2 min vs last month</div>
       </div>
     </div>
   </div>
 
-  <div>
-    <div class="section-label">Process Flow — Registration to Entry</div>
-    <div class="flow-wrap">
-      <div class="flow-step">
-        <div class="flow-num" style="background:var(--blue-lt);color:var(--blue)">1</div>
-        <div class="flow-title">เลือกประเภท</div>
-        <div class="flow-desc">ไทย: ID 13 หลัก<br>ต่างชาติ: Passport</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Registration funnel — drop-off analysis</div>
+      <div class="leg">
+        <span class="leg-item"><span class="leg-sq" style="background:var(--red)"></span>คนไทย</span>
+        <span class="leg-item"><span class="leg-sq" style="background:var(--blue)"></span>ต่างชาติ</span>
       </div>
-      <div class="flow-step">
-        <div class="flow-num" style="background:var(--purple-lt);color:var(--purple)">2</div>
-        <div class="flow-title">ยืนยันตัวตน</div>
-        <div class="flow-desc">Face scan + เทียบ ID / Passport</div>
+      <div style="position:relative;height:200px">
+        <canvas id="ch-funnel" role="img" aria-label="Registration funnel drop-off analysis comparing Thai and international users">Funnel stages: Visit, ID Submit, Face Pass, OTP Verify, Verified Member</canvas>
       </div>
-      <div class="flow-step">
-        <div class="flow-num" style="background:var(--teal-lt);color:var(--teal)">3</div>
-        <div class="flow-title">เข้าคิว</div>
-        <div class="flow-desc">Virtual queue token ผูกกับ ID</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Member composition</div>
+      <div class="leg">
+        <span class="leg-item"><span class="leg-sq" style="background:var(--red)"></span>ไทย 89.5%</span>
+        <span class="leg-item"><span class="leg-sq" style="background:var(--blue)"></span>ต่างชาติ 10.5%</span>
       </div>
-      <div class="flow-step">
-        <div class="flow-num" style="background:var(--amber-lt);color:var(--amber)">4</div>
-        <div class="flow-title">ซื้อบัตร</div>
-        <div class="flow-desc">2 บัตร / ID · ชำระเงิน · รับ QR</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num" style="background:var(--green-lt);color:var(--green)">5</div>
-        <div class="flow-title">เข้างาน</div>
-        <div class="flow-desc">สแกนหน้าที่ประตู · QR regenerate</div>
+      <div style="position:relative;height:200px">
+        <canvas id="ch-donut" role="img" aria-label="Donut chart member composition Thai 89.5% International 10.5%">Thai 89.5%, International 10.5%</canvas>
       </div>
     </div>
   </div>
 
+  <div class="wide-card">
+    <div class="chart-title">Bot detection vs Legitimate traffic — weekly trend</div>
+    <div class="leg">
+      <span class="leg-item"><span class="leg-sq" style="background:var(--red)"></span>Bot blocked</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--blue);opacity:.6"></span>Legit requests</span>
+    </div>
+    <div style="position:relative;height:180px">
+      <canvas id="ch-trend" role="img" aria-label="Weekly bot detection vs legitimate traffic trend over 8 weeks">Weekly trend comparison between bot blocked and legitimate user requests</canvas>
+    </div>
+  </div>
+
   <div>
-    <div class="section-label">Requirement Matrix — Feature Backlog</div>
-    <div class="req-wrap">
-      <table class="req-table">
+    <div class="section-label">Funnel Detail Table</div>
+    <div class="wide-card">
+      <table class="funnel-table">
         <thead>
-          <tr><th>Feature</th><th>Module</th><th>Priority</th><th>BA Owner</th><th>Effort</th><th>Status</th></tr>
+          <tr>
+            <th>Stage</th><th>Thai users</th><th>Intl users</th><th>Drop-off</th><th style="width:200px">Progress</th><th>Note</th>
+          </tr>
         </thead>
-        <tbody>
-          <tr><td>ID 13 หลัก + วันเกิด verify</td><td>Registration</td><td><span class="pill ph">High</span></td><td>Identity BA</td><td>M</td><td><div class="status-wrap"><div class="dot" style="background:#1D7A4A"></div>Defined</div></td></tr>
-          <tr><td>Face scan biometric matching</td><td>Registration</td><td><span class="pill ph">High</span></td><td>Identity BA</td><td>L</td><td><div class="status-wrap"><div class="dot" style="background:#1D7A4A"></div>Defined</div></td></tr>
-          <tr><td>Virtual queue + random token</td><td>Purchase</td><td><span class="pill ph">High</span></td><td>Platform BA</td><td>L</td><td><div class="status-wrap"><div class="dot" style="background:#8C5A00"></div>In review</div></td></tr>
-          <tr><td>2 บัตร / ID hard limit per event</td><td>Purchase</td><td><span class="pill ph">High</span></td><td>Platform BA</td><td>S</td><td><div class="status-wrap"><div class="dot" style="background:#1D7A4A"></div>Defined</div></td></tr>
-          <tr><td>QR regenerate on entry scan</td><td>Entry</td><td><span class="pill pm">Medium</span></td><td>Ops BA</td><td>M</td><td><div class="status-wrap"><div class="dot" style="background:#8C5A00"></div>In review</div></td></tr>
-          <tr><td>Anti-bot behavioral analysis layer</td><td>Security</td><td><span class="pill ph">High</span></td><td>Security BA</td><td>XL</td><td><div class="status-wrap"><div class="dot" style="background:#C8392B"></div>Backlog</div></td></tr>
-          <tr><td>Passport + face scan (ต่างชาติ)</td><td>Registration</td><td><span class="pill pm">Medium</span></td><td>Identity BA</td><td>M</td><td><div class="status-wrap"><div class="dot" style="background:#C8392B"></div>Backlog</div></td></tr>
-          <tr><td>Admin fraud detection dashboard</td><td>Analytics</td><td><span class="pill pl">Low</span></td><td>Data BA</td><td>L</td><td><div class="status-wrap"><div class="dot" style="background:#C8392B"></div>Backlog</div></td></tr>
-          <tr><td>Thai Ticket Major API integration</td><td>Platform</td><td><span class="pill ph">High</span></td><td>Platform BA</td><td>XL</td><td><div class="status-wrap"><div class="dot" style="background:#C8392B"></div>Backlog</div></td></tr>
-        </tbody>
+        <tbody id="funnel-tbody"></tbody>
       </table>
     </div>
   </div>
 
   <div>
-    <div class="section-label">Stakeholder Map</div>
-    <div class="stake-grid">
-      <div class="stake-card"><div class="stake-icon" style="background:var(--red-lt)">🎵</div><div><div class="stake-name">GMM Grammy</div><div class="stake-role">Project sponsor · Platform owner · Content rights holder</div></div></div>
-      <div class="stake-card"><div class="stake-icon" style="background:var(--blue-lt)">🎟</div><div><div class="stake-name">Thai Ticket Major</div><div class="stake-role">Distribution partner · Ticketing platform · Key integration target</div></div></div>
-      <div class="stake-card"><div class="stake-icon" style="background:var(--green-lt)">👤</div><div><div class="stake-name">แฟนเพลง / End User</div><div class="stake-role">Primary beneficiary · Registration & purchase flow user</div></div></div>
-      <div class="stake-card"><div class="stake-icon" style="background:var(--purple-lt)">🏛</div><div><div class="stake-name">DOPA (กรมการปกครอง)</div><div class="stake-role">ID verification authority · API provider สำหรับ identity check</div></div></div>
-      <div class="stake-card"><div class="stake-icon" style="background:var(--amber-lt)">🔒</div><div><div class="stake-name">Face Scan Vendor</div><div class="stake-role">Biometric API provider · Liveness detection · Matching engine</div></div></div>
-      <div class="stake-card"><div class="stake-icon" style="background:var(--teal-lt)">📊</div><div><div class="stake-name">Data & Ops Team</div><div class="stake-role">System monitoring · Fraud detection · Analytics reporting</div></div></div>
+    <div class="section-label">Anomaly Detection</div>
+    <div class="anomaly-row">
+      <div class="anomaly-card">
+        <div class="anomaly-head">IP Cluster Alert</div>
+        <div class="anomaly-val" style="color:var(--red)">203.x.x.x</div>
+        <div class="anomaly-desc">320 requests/min detected · Auto-blocked · Datacenter IP range</div>
+      </div>
+      <div class="anomaly-card">
+        <div class="anomaly-head">Multi-device Login</div>
+        <div class="anomaly-val" style="color:var(--amber)">ID 1301xxx</div>
+        <div class="anomaly-desc">Used from 3 different devices simultaneously · Flagged for review</div>
+      </div>
+      <div class="anomaly-card">
+        <div class="anomaly-head">Face Scan Failure</div>
+        <div class="anomaly-val" style="color:var(--blue)">Account #8821</div>
+        <div class="anomaly-desc">5 consecutive failures · Possible spoofing attempt · Rate limited</div>
+      </div>
     </div>
   </div>
 
 </div>
 
 <div class="footer">
-  <span class="footer-text">02_business_analyst.html · GMM Grammy Ticket Membership System</span>
-  <span class="footer-text">Business Analyst Model · 2025</span>
+  <span class="footer-text">01_data_analyst.html · GMM Grammy Ticket Membership System</span>
+  <span class="footer-text">Data Analyst Model · 2025</span>
 </div>
 
+<script>
+const funnel = [
+  { stage:'Visit / Landing', th:100, intl:100, drop:'-', color:'#888' },
+  { stage:'ID / Passport submit', th:82, intl:78, drop:'-18% Thai / -22% Intl', color:'#E24B4A' },
+  { stage:'Face scan pass', th:74, intl:70, drop:'-8% Thai / -8% Intl', color:'#4A9EE2' },
+  { stage:'OTP verify', th:70, intl:66, drop:'-4% Thai / -4% Intl', color:'#E2A84A' },
+  { stage:'Verified member', th:68, intl:64, drop:'-2% Thai / -2% Intl', color:'#4AE28A' },
+];
+
+const tbody = document.getElementById('funnel-tbody');
+funnel.forEach(r => {
+  tbody.innerHTML += `<tr>
+    <td style="color:var(--text)">${r.stage}</td>
+    <td style="color:var(--red)">${r.th}%</td>
+    <td style="color:var(--blue)">${r.intl}%</td>
+    <td style="color:var(--text2)">${r.drop}</td>
+    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${r.th}%;background:${r.color}"></div></div></td>
+    <td style="color:var(--text3);font-size:11px">${r.stage==='Visit / Landing'?'Baseline 100%':r.stage==='ID / Passport submit'?'Biggest drop-off':r.stage==='Face scan pass'?'Biometric gate':r.stage==='OTP verify'?'SMS confirmation':'Fully verified'}</td>
+  </tr>`;
+});
+
+new Chart(document.getElementById('ch-funnel'),{type:'bar',data:{labels:['Visit','ID submit','Face pass','OTP verify','Verified'],datasets:[{label:'คนไทย',data:[100,82,74,70,68],backgroundColor:'rgba(226,75,74,0.75)',borderSkipped:false},{label:'ต่างชาติ',data:[100,78,70,66,64],backgroundColor:'rgba(74,158,226,0.65)',borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw+'%'}}},scales:{x:{max:110,ticks:{callback:v=>v+'%',color:'#666',font:{family:'IBM Plex Mono',size:10}},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#888',font:{family:'IBM Plex Mono',size:10}},grid:{display:false}}}}});
+
+new Chart(document.getElementById('ch-donut'),{type:'doughnut',data:{labels:['ไทย','ต่างชาติ'],datasets:[{data:[89.5,10.5],backgroundColor:['#E24B4A','#4A9EE2'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}}}});
+
+new Chart(document.getElementById('ch-trend'),{type:'bar',data:{labels:['W1','W2','W3','W4','W5','W6','W7','W8'],datasets:[{label:'Bot blocked',data:[180,220,195,310,280,260,190,247],backgroundColor:'rgba(226,75,74,0.6)',order:2},{label:'Legit users',type:'line',data:[2100,2400,2300,1980,2500,2700,2900,3100],borderColor:'#4A9EE2',borderDash:[5,3],borderWidth:2,pointRadius:3,pointBackgroundColor:'#4A9EE2',backgroundColor:'transparent',order:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#666',font:{family:'IBM Plex Mono',size:10}},grid:{display:false}},y:{ticks:{color:'#666',font:{family:'IBM Plex Mono',size:10}},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+</script>
 </body>
 </html>
